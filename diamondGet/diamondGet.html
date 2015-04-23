@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="js/phaser.min.js"></script>
+	<style type="text/css">
+		body{
+			margin: 0;
+	}
+	</style>
+</head>
+
+<body>
+<script type="text/javascript">
+
+var game = new Phaser.Game(1200,700, Phaser.AUTO, '', {preload: preload, create: create, update: update });
+
+function preload()
+{
+    game.load.image('sky', 'imagenes/sky.png');//imagen del cielo
+    game.load.image('diamante', 'imagenes/diamond.png');//imagen de los diamantes,
+    game.load.image('plataforma', 'imagenes/plataforma1.png');//plataforma normal
+   	game.load.image('plataforma2','imagenes/plataforma2.png');//plataforma mediana
+    game.load.image('plataforma3','imagenes/plataforma3.png');//plataforma pequeña
+    game.load.image('agua', 'imagenes/agua.png');//agua
+    game.load.image('bandera', 'imagenes/bandera.gif');//badnera de llegada
+    game.load.image('reset', 'imagenes/reiniciar.png');//sprite para el reset
+    game.load.spritesheet('nene', 'imagenes/nene.png', 32,31,9);//sprite del personaje
+    game.load.spritesheet('soles','imagenes/soles.png',48,48,16);//sprite del sol
+    game.load.spritesheet('malo','imagenes/malo.png',32,32,4);//intento para futuro enemigo
+    game.load.audio('salto','musica/jump.mp3');//audio del salto
+    game.load.audio('toca','musica/touch.mp3');//audio al tocar diamantes
+    game.load.audio('ganar','musica/ganar.mp3');//musica de ganar la partida
+    game.load.audio('muere','musica/muere.mp3');//musica al perder la partida
+}
+
+var mganar;//variable de la musica de ganar(no arreglado)
+var mmuere;//variable de la musica de perder (no arreglado)
+var msalto;//variable de la muscia de salto
+var mtoca;//variable de la musica cuando toca un item
+var bandMusicaGana=false;//bandera que me sirve para que la musica se reproduzca una sola vez si gana
+var banderaMusicaPierde=false;//bandera que me sirve para que la musica se reproduzca una sola vez si pierde
+var player;//variable del jugador
+var sol;//variable del sol
+var enemigo;//variable que maneja al grupo de enemigos
+var reiniciar;//variable de boton reiniciar
+var boton;//variable del boton reiniciar
+var controles;//variable de controles
+var diamantes;//variable de diamantes
+var agua;//variable del agua, para uqe puda usar el overlap
+var bandera;//bandera de meta grupo para poder ser overlap
+var platInicialFinal;//plataforma inicial y final
+var platOculta;//plataformas ocultas apra el manejo de los enemigos
+var plataformas;//plataformas movil grande
+var plataformas2;//plataformas medianas
+var plataformas2moviles;//plataformas medianas moviles
+var plataformas3;//plataformas chicas 
+var plataformas3moviles;//plataformas chicas móviles
+var score=0;//variable que maneja el puntaje
+var scoreText;//variable para mostrar el texto del puntaje
+var band;//variable de bandera elemento que aparece en la meta al completar la recoleccion de diamantes
+var gano=false;//se usa por la animacion del sol al ganar!
+var ahogado=false;
+var comido=false;
+
+function create()
+{
+
+	//activo el modo arcade
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+
+	//coloco el cielo
+	var cielo=game.add.sprite(0,0,'sky');
+	cielo.width= game.world.width;
+	cielo.height= game.world.height;
+
+	
+	//agrupo elementos plataformas divididos en subgrupos por tamaño y por si caen o no caen
+	platInicialFinal= game.add.group();
+	platInicialFinal.enableBody = true;
+	plataformas = game.add.group();
+	plataformas.enableBody = true;
+	plataformas2 = game.add.group();
+	plataformas2.enableBody = true;
+	plataformas2moviles= game.add.group();
+	plataformas2moviles.enableBody = true;
+	plataformas3 = game.add.group();
+	plataformas3.enableBody = true;
+	plataformas3moviles= game.add.group();
+	plataformas3moviles.enableBody = true;
+	
+	//agrupo el boton reiniciar
+	reiniciar= game.add.group();
+	reiniciar.enableBody = true;
+
+		
+	//plataforma inicial
+	var ledge= platInicialFinal.create(0,350,'plataforma');
+	ledge.width= ledge.width-50;
+	ledge.body.immovable=true;
+
+	//plataforma 2
+	ledge = plataformas2.create(250,275,'plataforma2');
+	ledge.body.immovable=true;
+
+	//plataforma 3
+	ledge = plataformas3.create(270, 450,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 4 cae
+	ledge= plataformas3moviles.create(222, 400,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 5
+	ledge = plataformas2.create(300,200,'plataforma2');
+	ledge.body.immovable=true;
+
+	//plataforma 6 cae
+	ledge = plataformas.create(400,200,'plataforma');
+	ledge.body.immovable=true;
+
+	//plataforma7 chica sobre la larga
+	ledge = plataformas2.create(580, 130,'plataforma2');
+	ledge.body.immovable=true;
+
+	//plataforma 8
+	ledge = plataformas3.create(650, 260,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 9 cae
+	ledge= plataformas2moviles.create(700, 350,'plataforma2');
+	ledge.body.immovable=true;
+
+	//plataforma 10  cae
+	ledge = plataformas3moviles.create(790, 500,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 11
+	ledge = plataformas3.create(850, 430,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 12
+	ledge = plataformas3.create(880, 350,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 13
+	ledge= plataformas3.create(920,270,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 14
+	ledge= plataformas2.create(845,200,'plataforma2');
+	ledge.body.immovable=true;
+
+	//plataforma 15 cae
+	ledge= plataformas3moviles.create(950,160,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma 16 cae
+	ledge= plataformas3moviles.create(1070,200,'plataforma3');
+	ledge.body.immovable=true;
+
+	//plataforma de llegada
+	ledge = platInicialFinal.create(1100, 150, 'plataforma');
+	ledge.body.immovable=true;
+
+	//bandera de plataforma de llegada se colocara en el momento de juntar todas las diamantes
+	bandera=game.add.group();
+	bandera.enableBody = true;
+
+	//creo el personaje
+	player= game.add.sprite(0,150,'nene');//0,0
+
+
+	//activo physics al player y enemigos
+	game.physics.arcade.enable(player);
+
+	//rebote y tamaños del nene
+	player.body.gravity.y=400;
+	player.body.collideWorldBounds=true;
+	player.width=player.width+5;
+	player.height=player.height+5
+
+	//animaciones del nene
+    player.animations.add('left',[0,1,2,3],10, true);
+    player.animations.add('right',[5,6,7,8],10,true);
+
+    //coloco las diamantes
+    diamantes= game.add.group();
+    diamantes.enableBody=true;
+
+    var u= diamantes.create(170, 190, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(260, 370, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(470, 150, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(750, 50, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(780, 450, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(880, 430, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(1060, 150, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(585, 50, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(660, 220, 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(780,240 , 'diamante');
+    u.body.immovable=true;
+
+    u= diamantes.create(0,20 , 'diamante');
+    u.body.immovable=true;
+
+
+    //coloco el sol 
+    sol= game.add.sprite(200,22,'soles');
+    game.physics.arcade.enable(sol);
+    sol.width=sol.width+25;
+    sol.height=sol.height+25;
+
+    //animaciones del sol
+    sol.animations.add('normal',[0,1],3,true);
+    sol.animations.add('toca',[1,2,3,4,5,1,0],8,false);
+    sol.animations.add('salto',[7,8,9],8,false);
+    sol.animations.add('gano',[0,1,2,3,4,5],10,true);
+    sol.animations.add('cae', [10,11,12,13,14,15],60,false);
+
+
+
+    //plataforma que va oculta bajo el agua para usos de los enemigos
+    platOculta= game.add.group();
+	platOculta.enableBody = true;
+
+	//plataforma que esta atras del agua para que los enemigos salten en ella y no colisionen con el mundo
+	ledge = platOculta.create(0,660,'plataforma');
+	ledge.width=game.world.width;
+	ledge.body.immovable=true;
+
+	//grupo para manejar los enemigos
+	enemigo= game.add.group();
+	enemigo.enableBody=true;
+
+
+	//plataformas con las cuales colisionan los enemigos para bajar y subir
+	ledge= platOculta.create(120,100,'plataforma');
+	ledge.body.immovable= true;
+	ledge.renderable=false;
+
+	//coloco enemigo
+	var en= enemigo.create(160,150,'malo');
+	en.body.gravity.y= 400;
+	
+
+
+	ledge= platOculta.create(250,75,'plataforma');
+	ledge.body.immovable= true;
+	ledge.renderable=false;
+	en= enemigo.create(350,350,'malo');
+	en.body.gravity.y=400;
+	
+
+
+	ledge= platOculta.create(0,75,'plataforma');
+	ledge.body.immovable= true;
+	ledge.width=game.world.width;
+	ledge.renderable=false;
+	en= enemigo.create(740,400,'malo');
+	en.body.gravity.y=400;
+	
+
+	en= enemigo.create(1000,400,'malo');
+	en.body.gravity.y=400;
+
+
+
+
+	 //coloco el agua como grupo para poder aplicar overlap
+    agua= game.add.group();
+    agua.enableBody=true;
+	var ag= agua.create(0,618,'agua');
+	ag.body.immovable=true;
+	ag.width= game.world.width;
+
+	//coloco la musica del juego
+	msalto=game.add.audio('salto');
+	mtoca = game.add.audio('toca');
+	mmuere= game.add.audio('muere');
+	mganar= game.add.audio('ganar');
+	
+	//seteo los controles a su variable
+	controles= game.input.keyboard.createCursorKeys();
+
+	//coloco el indicador de recolección de diamantes
+	scoreText = game.add.text(40, 22, '0/10', { fontSize: '28px', fill: '#3104B4' });
+
+}
+
+
+
+function update()
+{
+
+
+	//nene  puede colisionar con cualquier cosa 
+	game.physics.arcade.collide(player, platInicialFinal);
+	game.physics.arcade.collide(player, plataformas, caer,null,this);
+	game.physics.arcade.collide(player, plataformas2);
+	game.physics.arcade.collide(player, plataformas3);
+	game.physics.arcade.collide(player, plataformas2moviles,caer,null,this);
+	game.physics.arcade.collide(player, plataformas3moviles,caer,null,this);
+	game.physics.arcade.collide(enemigo, platOculta, mueve, null, this);
+	game.physics.arcade.collide(player, enemigo, come, null, this);
+
+
+	game.physics.arcade.overlap(player, agua, pierde, null, this);
+	game.physics.arcade.overlap(player, diamantes, agarrar, null, this);
+	game.physics.arcade.overlap(player, bandera, ganar, null, this);
+
+
+	//reseteo la velocidad de movimiento del jugador
+	player.body.velocity.x=0;
+
+
+	if (controles.left.isDown)
+	{//si el jugador se mueve a la izquierda
+
+		player.body.velocity.x = -150;
+		player.animations.play('left');
+	}
+
+	else{
+		if(controles.right.isDown )
+		{   //si el jugador se mueve a la redecha
+			player.body.velocity.x = 150;
+			player.animations.play('right');
+		}
+		else{
+
+			if(controles.down.isDown)
+			{//si el jugador presiona hacia abajo solo mirara al frente, es para verle la cara al muñeco nomas
+				player.frame=4;
+			}
+			else
+			{//si se queda quieto se queda como esta
+			 player.animations.stop();
+			 }
+		    }
+		}
+	
+	if(controles.up.isDown && player.body.touching.down && !gano && !comido )
+	{ 
+		//el jugador salta
+ 		player.body.velocity.y= -250;
+ 		msalto.play();//musica de salto
+ 		sol.animations.play('salto');//animacion del sol cuando el jugadro salta
+ 		
+	}
+	else
+	{
+		if(player.body.touching.down && !gano && !game.physics.arcade.overlap(player,diamantes,null,this) && !game.physics.arcade.collide(player,diamantes,null,this))
+		{/*es apra mantener una cara vista del sol cuando no se hace nada y termino una animación si no mantiene
+		 lacara de la ultima animación realizada, pregunto por overlap y collide porque a veces cuando tocas un diamante al ser ARCADE salta sobre 
+		 la caja invisible de la imagen y la animacion no se reproduce porque el muñeco esta tocando abajo*/
+			sol.animations.stop();
+			sol.frame=0;
+		}
+	}
+
+	if(comido)
+	{
+		sol.animations.play('cae');
+	}
+
+}
+
+
+
+    //funcion salto del enemigo
+	function mueve (en, plataforma)
+	{
+		if(en.body.touching.down){
+			en.body.gravity.y=-400;
+			en.frame=1;
+		}
+		else{
+				if(en.body.touching.up){
+					en.body.gravity.y=400;
+					en.frame=0;
+				}
+		}
+
+		
+	}
+
+	function come(player, en)
+	{
+		if(!gano && !ahogado)
+		{   comido=true;
+			player.kill();
+			sol.animations.play('cae');
+			botonReset(150, 300,'ERES ALIMENTO DE PULPO!!');
+			if(!banderaMusicaPierde)
+			{
+				banderaMusicaPierde=true;
+				mmuere.play();
+			}
+		}
+
+	}
+
+
+
+	//funcion de plataforma que cae cuando se la pisa
+	function caer(player, plataforma)
+	{
+		if(player.body.touching.down)
+		{
+			plataforma.body.gravity.y=300;
+		}
+		
+	}
+	
+	//funcion que se ejecuta cuando el jugador agarra un diamante
+	function agarrar(player, diamantes)
+	{
+		mtoca.play();
+		diamantes.kill();
+		sol.animations.play('toca');
+		score=score+1;
+		scoreText.text= score+ '/10';
+
+		if(score==10)
+		{
+		band = bandera.create(1150,120,'bandera');
+		band.width= band.width-100;
+		band.height= band.height-160;
+		}
+
+	}
+
+
+	//funcion que se activa si el jugador cae al agua
+	function pierde (player, agua)
+	{	
+		if(!gano && !comido)
+		{   ahogado=true;
+			sol.animations.play('cae');
+			botonReset(350, 300,'TE AHOGASTE!!');
+			if(!banderaMusicaPierde)
+			{
+				banderaMusicaPierde=true;
+				mmuere.play();
+			}
+		}
+		
+	}
+
+	//funcion que se ejecuta cuando el player toca la bandera
+
+	function ganar(player , bandera)
+	{
+		gano=true;
+		sol.animations.play('gano');
+	    botonReset(400, 300,'GANASTE!!' );
+	    if(!bandMusicaGana)
+	    {
+	    	bandMusicaGana=true;
+	    	mganar.play();
+	    }
+	}
+
+	//funcion que crea el boton de reseteo y el mensaje 
+
+	function botonReset(x,y, mensaje)
+	{
+		var gana= game.add.text(x,y , mensaje, { fontSize: '65px', fill: '#3104B4', align:'center' });
+		boton= reiniciar.create(550,380,'reset');
+		boton.inputEnabled=true;
+	    boton.events.onInputDown.add(reinicio,this);
+	}
+
+	//funcion que se ejecuta cuando se presiona el sprite de reinicio 
+	function reinicio()
+	{ 
+		ahogado=false;
+		comido=false;
+		mmuere.stop();
+		mganar.stop();
+		bandMusicaGana=false;
+		banderaMusicaPierde=false; 
+		gano=false;
+		score=0; 
+		game.state.start(game.state.current);
+	} 
+</script>
+</body>
+</html>
