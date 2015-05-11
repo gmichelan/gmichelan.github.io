@@ -1,0 +1,6 @@
+Logré entender e implementar los stearing behaviors. Modifiqué algunos script para que funcionara
+de acuerdo a lo pedido y otros que generaban conflictos en los test.
+-Adeudo informe.
+-Adeudo rotar los sprites para que la boca apunte al objetivo, voy a seguir buscando a ver como puedo hacerlo.
+-Adeudo lograr aplicar algun overlap o collide entre el agente y la comida. No pude resolver eso
+ni siquiera aplicando la física ARCADE, seguire buscando como a ver si puedo tenerlo para el jueves.

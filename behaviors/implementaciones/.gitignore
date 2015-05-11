@@ -1,0 +1,10 @@
+# System and IDE files
+Thumbs.db
+.DS_Store
+
+# Library
+scripts/libs
+
+# Build
+build/
+node_modules/
