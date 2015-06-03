@@ -9,7 +9,7 @@ BehaviorFlee.prototype.constructor = BehaviorFlee;
 BehaviorFlee.prototype = {
 
 	update:function(){
-		console.log('getVelocity', this.boid.getVelocity());
+		//console.log('getVelocity', this.boid.getVelocity());
 		var fleeVec = this.calcFlee();
 		this.boid.sprite.body.acceleration.add(fleeVec.x,fleeVec.y);
 		Behavior.prototype.update.call(this);

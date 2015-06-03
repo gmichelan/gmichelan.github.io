@@ -1,4 +1,4 @@
-function Boid(game) {
+function Agente(game) {
   Entity.call(this, game); // call super constructor.
 
   // Behavior Objects
@@ -23,11 +23,11 @@ function Boid(game) {
 
 
 // subclass extends superclass
-Boid.prototype = Object.create(Entity.prototype);
-Boid.prototype.constructor = Boid;
+Agente.prototype = Object.create(Entity.prototype);
+Agente.prototype.constructor = Boid;
 
 
-Boid.prototype.create = function(pos,vel,angle, debug) {
+Agente.prototype.create = function(pos,vel,angle, debug) {
 
 	Entity.prototype.create.call(this, pos,vel,angle, debug);
 	if(debug)
@@ -39,7 +39,7 @@ Boid.prototype.create = function(pos,vel,angle, debug) {
 	return this;
 }
 
-Boid.prototype.debugUpdate = function() {
+Agente.prototype.debugUpdate = function() {
 
 	Entity.prototype.debugUpdate.call(this);
 	this.debugVel.start.x = this.sprite.position.x;
@@ -54,7 +54,7 @@ Boid.prototype.debugUpdate = function() {
 
 }
 
-Boid.prototype.debugRender = function() {
+Agente.prototype.debugRender = function() {
 
 	Entity.prototype.debugRender.call(this);
 

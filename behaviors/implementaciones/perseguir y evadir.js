@@ -63,7 +63,7 @@
     var xpos = Math.floor(Math.random()*game.world.bounds.width);
     var ypos = Math.floor(Math.random()*game.world.bounds.height);
     var pos = new Phaser.Point(xpos,ypos);
-    var vel = new Phaser.Point(30,20);
+    var vel = new Phaser.Point(30,40);
     boid.create(pos,vel, 0, isDebugging);
     boid.category = 1;
     boid.behavior = new BehaviorEvade(boid);

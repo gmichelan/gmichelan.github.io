@@ -46,8 +46,6 @@ $(document).ready(function() {
     
   }
 
-
-
   function createFleeingObject()
   {
     for(var i=1; i<21; i++){
@@ -63,6 +61,7 @@ $(document).ready(function() {
       Flockable.push(boid);
       console.log(i);
       boid.updateAvoidance(deambulando);}
+      
       boid.sprite.animations.add('miedo',[0,1],10,true);
       boid.sprite.animations.play('miedo');
   }

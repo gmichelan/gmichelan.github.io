@@ -28,7 +28,7 @@ function preload()
     game.load.image('reset', 'imagenes/reiniciar.png');//sprite para el reset
     game.load.spritesheet('nene', 'imagenes/nene.png', 32,31,9);//sprite del personaje
     game.load.spritesheet('soles','imagenes/soles.png',48,48,16);//sprite del sol
-    game.load.spritesheet('malo','imagenes/malo.png',32,32,4);//intento para futuro enemigo
+    game.load.spritesheet('malo','imagenes/pulpo.png',40,32,4);//intento para futuro enemigo
     game.load.audio('salto','musica/jump.mp3');//audio del salto
     game.load.audio('toca','musica/touch.mp3');//audio al tocar diamantes
     game.load.audio('ganar','musica/ganar.mp3');//musica de ganar la partida
@@ -110,6 +110,7 @@ function create()
 
 	//plataforma 4 cae
 	ledge= plataformas3moviles.create(222, 400,'plataforma3');
+	console.log(ledge);
 	ledge.body.immovable=true;
 
 	//plataforma 5

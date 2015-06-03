@@ -19,10 +19,21 @@ BehaviorEvade.prototype = {
 
 		var seek = MovementUtils.seek(this.boid.preditorTarget.getPosition(),this.boid.getPosition());
 		var updatesAhead = seek.getMagnitude() / this.boid.maxSpeed; //aplica la mejora al comportamiento
-		console.log('updatesAhead', updatesAhead)
-		var projectedVel = new Phaser.Point(this.boid.preditorTarget.getVelocity().x * updatesAhead, this.boid.preditorTarget.getVelocity().y * updatesAhead)
-		var futurePosition = Phaser.Point.add(this.boid.preditorTarget.getPosition(), projectedVel)
+		//console.log('updatesAhead', updatesAhead)
+		var projectedVel = new Phaser.Point(this.boid.preditorTarget.getVelocity().x * updatesAhead, this.boid.preditorTarget.getVelocity().y * updatesAhead);
+		var futurePosition = Phaser.Point.add(this.boid.preditorTarget.getPosition(), projectedVel);
+		futurePosition= this.calcFlee(futurePosition);
+		return futurePosition;// falta flee
+	},
 
-		return futurePosition;
+	calcFlee:function(futuraPosicion){
+		console.log("futura posicion "+futuraPosicion);
+		console.log("velocidad: "+this.boid.getVelocity());
+		var flee = Phaser.Point.subtract(futuraPosicion, this.boid.getVelocity());
+			return flee;
 	}
+
+
+
+
 }
