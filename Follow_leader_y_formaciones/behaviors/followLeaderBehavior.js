@@ -149,14 +149,29 @@ FollowLeaderBehavior.prototype={
 	},
 
 	formacionWedge: function(id, behind){
+		console.log(this.agente.lider);
+	   	console.log("rotacion del lider "+this.agente.lider.sprite.rotation);
+		var rot = this.agente.lider.sprite.rotation+ Math.PI /3 ;
+		console.log(rot);
+		var sep =  80;
 		switch(id){
-			case 0: return new Phaser.Point(behind.x - 40, behind.y +10);
+			case 0: var d= Math.cos(rot)*sep;
+					var r= Math.sin(rot)*sep;
+
+					return new Phaser.Point(behind.x + d, behind.y + r);
 			break;
-			case 1: return new Phaser.Point(behind.x + 40, behind.y + 10);
+			case 1: 
+					var d= Math.cos(rot)*(sep*2);
+					var r= Math.sin(rot)*(sep*2);
+					return new Phaser.Point(behind.x + d, behind.y + r);
 			break;
-			case 2: return new Phaser.Point(behind.x - 80, behind.y +60);
+			case 2: var d= Math.cos(rot+ Math.PI/3)*(sep);
+					var r= Math.sin(rot+ Math.PI/3)*(sep);
+					return new Phaser.Point(behind.x +d, behind.y +r);
 			break;
-			case 3: return new Phaser.Point(behind.x + 80, behind.y +60);
+			case 3: var d= Math.cos(rot+ Math.PI/3)*(sep*2);
+					var r= Math.sin(rot+ Math.PI/3)*(sep*2);
+					return new Phaser.Point(behind.x + d, behind.y +r);
 			break;
 			default: return behind;
 			break;

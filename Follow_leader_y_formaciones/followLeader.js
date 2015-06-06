@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	var game = new Phaser.Game(800,600,Phaser.AUTO, ' ', {preload: preload, create: create, update: update});
+	var game = new Phaser.Game(1000,1000,Phaser.AUTO, ' ', {preload: preload, create: create, update: update});
 	var flota = []; //contiene todas las naves del juego 
 	var elementos = [];
 	var enemigo;
@@ -18,7 +18,9 @@ $(document).ready(function(){
 	}
 
 	function create(){
-		game.add.sprite(0,0,'fondo');
+		var back=game.add.sprite(0,0,'fondo');
+		back.width= game.world.width;
+		back.height= game.world.height;
 		enemigo = crearEnemigo();
 		lider= crearLider();
 		lider.updateTarget(enemigo);
@@ -54,8 +56,10 @@ $(document).ready(function(){
     	jefe.category = 1;
     	jefe.sprite.width=50;
     	jefe.sprite.height=50;
+    	jefe.sprite.immovable=true;
     	jefe.behavior = new BehaviorPursue(jefe);
     	elementos.push(jefe);
+    	console.log(jefe);
     	return jefe;
 	}
 
